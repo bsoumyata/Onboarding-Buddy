@@ -1,0 +1,273 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {
+          "systemMessage": "=You are the Onboarding Assistant, a friendly and professional chatbot that helps new employees settle into the company smoothly.\n\nYour scope is strictly limited to the following resources:\n1. Employee Onboarding Checklist – contains the list of tasks employees need to complete during onboarding.\n2. Policies – contains company policies, procedures, and employee benefits.\n\nInstructions:\n- Only provide answers that are explicitly available in the above documents.\n- Do not invent, assume, or generate information that is not present in the documents.\n- If the question is HR-related but you don’t have the answer → politely direct the employee to the HR team at hr@company.com. Example: “I couldn’t find that information. You can reach out to HR at hr@company.com for further help.”\n- If the question is outside onboarding, policies, or benefits → politely refuse. Example: “I’m here to help with onboarding, policies, and benefits. For this question, I may not be the right resource.”\n- Do not end responses with follow-up offers (e.g., drafting emails, asking if the employee needs more help, etc.).\n- Keep responses clear, concise, and factual.\n- Reformat the response in a proper markdown format\n\nCore Responsibilities:\n\nEmployee Onboarding Checklist (Notion Database – “Employee Onboarding Checklist”):\nWhen employees ask for their tasks, progress, or checklist, retrieve from the Employee Onboarding Checklist.\nDo not show “Notion page” or database parameters in responses—only the useful task information.\n\nCompany Policies & Benefits (Notion Page – “Policies”)\nWhen employees ask about company rules, policies, or benefits, search the Policies document.\nReturn a concise, direct, and well-formatted answer (bullet points, short sections).\nIf relevant, include a link back to the full policy page for deeper reading.\n\nStyle & Tone:\nBe friendly, warm, and professional—think of yourself as a supportive buddy.\nKeep answers structured (tables, bullet points, short sections).\nOnly link out when necessary (e.g., full documents, forms, or external tools). Otherwise, keep interactions inside the chat.\n\n\nWhen returning the Employee Onboarding Checklist, always use the following format:\n# Onboarding Tasks\n\n**Task:** <Task Title>  \n**Description:** <Task Description>  \n**Setup Link:** [Open Setup](<URL>)\n\n---\n\nRepeat the above block for each task. Separate tasks with a horizontal divider (`---`)."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        488,
+        0
+      ],
+      "id": "e0499fff-9136-446c-9495-022d1f8ae63d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        224
+      ],
+      "id": "c3045519-8d68-42c4-b73e-d3d507949d47",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IlEorS8UjUGVTHMU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.employeeId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        224
+      ],
+      "id": "8d515b9f-93e2-45aa-801e-96dd98eb8619",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Gets the data from the Employee Onboarding Checklist database",
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "25ecb22a-eb82-80bd-b0a1-fa23854f208b",
+          "mode": "list",
+          "cachedResultName": "Employee Onboarding Checklists",
+          "cachedResultUrl": "https://www.notion.so/25ecb22aeb8280bdb0a1fa23854f208b"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "simple": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        224
+      ],
+      "id": "ba8179fa-6eec-4ed0-ad7e-57472c632be2",
+      "name": "Gets Checklist",
+      "credentials": {
+        "notionApi": {
+          "id": "IGoOAdbRYlW6Lcyl",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Gets the policy file pages from notion",
+        "resource": "block",
+        "operation": "getAll",
+        "blockId": {
+          "__rl": true,
+          "value": "https://www.notion.so/Policies-25ecb22aeb82809ca36df13133bf606a",
+          "mode": "url"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "fetchNestedBlocks": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Also_Fetch_Nested_Blocks', ``, 'boolean') }}",
+        "simplifyOutput": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify_Output', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        752,
+        224
+      ],
+      "id": "df8e3fcc-9ae2-4f6b-a508-507a02f4eb99",
+      "name": "Gets Policy Information",
+      "credentials": {
+        "notionApi": {
+          "id": "IGoOAdbRYlW6Lcyl",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sbinani",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        0
+      ],
+      "id": "2b6f79a5-3714-4eb2-87c5-840eda068875",
+      "name": "Webhook",
+      "webhookId": "a03dd79b-3ce7-4773-a680-8194b93fded3"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "3e5c9383-a788-47bf-bf32-fcd1352c2d2e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9752b4bf-a878-403c-96b7-7340cc16a0b6",
+              "name": "reply",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        0
+      ],
+      "id": "840d14c5-6998-411f-a2e4-5e75196a258c",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gets Checklist": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gets Policy Information": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cc805688-f6e8-4e7e-b1d0-e58f7642fdcc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd45b40be29a809f1ba031ab472bd388bf0cfa6c888723a39c4875df2f0ecc1e"
+  },
+  "id": "NgvmilNw2LABv4hE",
+  "tags": []
+}
