@@ -27,8 +27,15 @@ A lightweight onboarding assistant that gives new hires a clear checklist and an
 - [Live prototype (Lovable)](https://onboarding-buddy-soumyata.lovable.app/)  
 - [Product Requirements Document (PRD)](https://www.notion.so/Product-Requirements-Document-PRD-Onboarding-Buddy-25dcb22aeb8280b19d59d4fd95606e11?source=copy_link)  
 - [Wireframes (Figma)](https://www.figma.com/design/j8VQerfPU3cIowSJW3TZzq/Onboarding-Buddy?node-id=0-1&t=E9y8lNm8r67tWDgk-1)  
-- [n8n workflow](https://github.com/bsoumyata/Onboarding-Buddy/blob/bb67a9cbd2cd007e4c3bd0cf0e2714552386fc50/Onboarding%20Buddy%20Workflow.json) 
 - [Demo video (Loom)](https://www.loom.com/share/870fcc4f5ee1403cb1dfd697445834c7?sid=f8714863-00cb-4223-9e4a-70bb63a6c6c4)  
+
+
+## 🔄 n8n Workflow
+
+[Download JSON workflow](https://github.com/bsoumyata/Onboarding-Buddy/blob/bb67a9cbd2cd007e4c3bd0cf0e2714552386fc50/Onboarding%20Buddy%20Workflow.json)
+
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/147e5874-8f54-4f8a-97a5-427ea99463ec" />
+
 
 
 ## 🚀 Core features
